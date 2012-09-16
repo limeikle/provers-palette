@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Prover's Palette QEPCAD Widget
+Bundle-SymbolicName: org.cognetics.proverspalette.qepcad;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.cognetics.proverspalette.qepcad.Activator
+Bundle-Vendor: Laura Meikle
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms;visibility:=reexport,
+ org.cognetics.proverspalette.base
+Eclipse-LazyStart: true

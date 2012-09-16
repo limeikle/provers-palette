@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Maple
+Bundle-SymbolicName: org.cognetics.proverspalette.maple;singleton:=true
+Bundle-Version: 1.0.0
+Export-Package: org.cognetics.proverspalette.maple
+Require-Bundle: org.cognetics.proverspalette.base

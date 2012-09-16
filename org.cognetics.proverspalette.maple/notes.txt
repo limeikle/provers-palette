@@ -1,0 +1,28 @@
+
+# to be able to run maple from u of e inf network
+# we need password-less login which is disabled in inf default sshd
+# do this by starting our own sshd server
+
+# login to some machine with maple(e.g.) master, then
+# (with config files set in sshd)
+cd sshd
+/usr/sbin/sshd -f sshd_config -p 2422
+
+# however most port/machines are not visible
+# so we have to make the port visible somewhere else
+ssh -N -R 2422:localhost:2422 -l alex heneveld.org &
+# (that does port forwarding to heneveld.org;
+# you could instead to do your local machine, 
+# but only if it is visible from inf!)
+
+
+# then maple can be run by
+ssh -l s9811254 -p 2422 alex.heneveld.org maple -q
+
+#e.g.
+
+echo "x+x;" | ssh -l s9811254 -p 2422 alex.heneveld.org maple -q
+
+# should show 2x (ignoring error output)
+
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Proof General"
+            id="ed.inf.proofgeneral">
+      </category>
+      <view
+            name="Prover's Palette: QEPCAD"
+            icon="icons/qepcad-view-icon.png"
+            category="ed.inf.proofgeneral"
+            class="org.cognetics.proverspalette.qepcad.gui.MainQepcadViewPart"
+            id="org.cognetics.proverspalette.qepcad.gui.MainQepcadViewPart">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="ed.inf.proofgeneral.views.PGPerspective">
+         <view
+               ratio="0.5"
+               relative="ed.inf.proofgeneral.views.LatestOutput"
+               relationship="right"
+               id="org.cognetics.proverspalette.qepcad.gui.MainQepcadViewPart">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            name="ProofGeneral with Prover&apos;s Palette QEPCAD Widget">
+         <property
+               name="appName"
+               value="ProofGeneral with Prover&apos;s Palette QEPCAD Widget">
+         </property>
+      </product>
+   </extension>
+
+</plugin>

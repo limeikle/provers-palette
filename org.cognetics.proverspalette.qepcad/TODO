@@ -1,0 +1,11 @@
+
+problem tab changes are not superseded by import tab changes
+(set X free in problem tab, then in import tab set A free but leave X bound)
+
+import tab lists don't have scrollbar
+
+doesn't parse \<noteq>
+
+iff expansion for PNF
+
+when some set free, others were set E (for knuth 5)
