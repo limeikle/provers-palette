@@ -33,7 +33,8 @@ public abstract class FinishTabComposite extends ProversPaletteTabCompositeAbstr
 	protected Button includeComments = null;
 	protected Button buttonInsert = null;	
 
-	protected Group toolOutputGroupAndButtons;
+	protected Group toolResultGroup;
+	protected Composite toolResultRHS;
 	private Composite toolButtonsComposite = null;
 
 	@Override
@@ -52,11 +53,11 @@ public abstract class FinishTabComposite extends ProversPaletteTabCompositeAbstr
 	}
 
 	protected void createExternalToolOutputComposite(Composite parent) {		
-		toolOutputGroupAndButtons = new Group(parent, SWT.NONE);
-		toolOutputGroupAndButtons.setLayout(new GridLayout(2, false));
-		toolOutputGroupAndButtons.setText(view.getName()+" Result");
+		toolResultGroup = new Group(parent, SWT.NONE);
+		toolResultGroup.setLayout(new GridLayout(2, false));
+		toolResultGroup.setText(view.getName()+" Result");
 
-		SashForm sash = new SashForm(toolOutputGroupAndButtons, SWT.HORIZONTAL);
+		SashForm sash = new SashForm(toolResultGroup, SWT.HORIZONTAL);
 		sash.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));		
 		
 		Composite lsg = new Composite(sash, SWT.NONE);
@@ -75,15 +76,15 @@ public abstract class FinishTabComposite extends ProversPaletteTabCompositeAbstr
 		l.setText("=");
 		l.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, true));
 
-		toolOutputStyledText = new EasyScrollingStyledText(sash, SWT.MULTI | SWT.WRAP | SWT.BORDER).getStyledText();
-//		qepcadOutputStyledText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+		toolResultRHS = new Composite(sash, SWT.NONE);
+		toolResultRHS.setLayout(newGridLayout0(1));
+		
+		toolOutputStyledText = new EasyScrollingStyledText(toolResultRHS, SWT.MULTI | SWT.WRAP | SWT.BORDER).getStyledText();
+		toolOutputStyledText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		toolOutputStyledText.setEditable(false);
 		toolOutputStyledText.setWordWrap(true);
 		
-		//showCounterExampleButton();
-		//hideQepcadButtonsComposite();
-		        
-//		sash.setWeights(new int[] { 4, 3 });
+		// in subclasses (eg qepcad show counterexampl) toolResultRHS can have additional buttons underneath the output
 	}
 	
 	/** adds a composite to the right of the external tool (top-half) part of the widget,
@@ -91,10 +92,9 @@ public abstract class FinishTabComposite extends ProversPaletteTabCompositeAbstr
 	protected Composite enableAndGetToolButtonsComposite() {
 		if (toolButtonsComposite!=null) return toolButtonsComposite;
 		
-		toolOutputGroupAndButtons.setLayout(new GridLayout(2, false));
-		toolButtonsComposite = new Composite(toolOutputGroupAndButtons, SWT.NONE);
-		toolButtonsComposite.setLayout(newGridLayout(1, 0, 1));
-		toolButtonsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+		toolButtonsComposite = new Composite(toolResultRHS, SWT.NONE);
+		toolButtonsComposite.setLayout(newGridLayout0(1));
+		toolButtonsComposite.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false));
 		
 		return toolButtonsComposite;
 	}
@@ -103,8 +103,7 @@ public abstract class FinishTabComposite extends ProversPaletteTabCompositeAbstr
 		if (toolButtonsComposite==null) return;
 		toolButtonsComposite.dispose();
 		toolButtonsComposite = null;
-		toolOutputGroupAndButtons.setLayout(new GridLayout(1, false));
-		toolOutputGroupAndButtons.layout();
+		toolResultRHS.layout();
 	}
 
 	

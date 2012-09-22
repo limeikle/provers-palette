@@ -146,7 +146,7 @@ public class ConfigTabComposite extends ProversPaletteTabCompositeAbstract {
 	private void createProjectionPhaseGroup(Composite parent) {
 		GridLayout gridLayout1 = new GridLayout();
 		gridLayout1.marginWidth = 5;
-		gridLayout1.marginHeight = 0;
+		gridLayout1.marginHeight = 5;
 		
 		Group group1 = new Group(parent, SWT.NONE);
 		group1.setLayout(gridLayout1);
@@ -169,6 +169,9 @@ public class ConfigTabComposite extends ProversPaletteTabCompositeAbstract {
 		solutionsGroup.setText("Solution Construction Phase");
 		createSolnSubgroupOtherOptions(solutionsGroup);
 		createSolnSubgroupCadUndefined(solutionsGroup);
+		
+		// TODO when connected to qepcad, make visible
+		solutionsGroup.setVisible(false);
 	}
 
 	private void createSolnSubgroupCadUndefined(Composite parent) {
@@ -216,6 +219,8 @@ public class ConfigTabComposite extends ProversPaletteTabCompositeAbstract {
 	}
 
 	public void contributeSettingsToQepcadProblem(QepcadProblem prob) throws QepcadDataException {
+		
+		prob.executable = executableText.getText();
 		
 		try {
 			prob.memory = Long.parseLong(memoryText.getText());

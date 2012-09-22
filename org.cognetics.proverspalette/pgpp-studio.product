@@ -37,10 +37,8 @@ With Prover&apos;s Palette extensions, (c) Laura Meikle 2009.
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="com.ibm.icu"/>
@@ -49,12 +47,15 @@ With Prover&apos;s Palette extensions, (c) Laura Meikle 2009.
       <plugin id="ed.inf.proofgeneral.prover.isabelle"/>
       <plugin id="javax.servlet"/>
       <plugin id="javax.servlet.jsp"/>
+      <plugin id="javax.transaction" fragment="true"/>
       <plugin id="org.apache.ant"/>
       <plugin id="org.apache.commons.el"/>
       <plugin id="org.apache.commons.logging"/>
       <plugin id="org.apache.jasper"/>
       <plugin id="org.apache.lucene"/>
       <plugin id="org.apache.lucene.analysis"/>
+      <plugin id="org.apache.lucene.core"/>
+      <plugin id="org.codehaus.groovy.frameworkadapter" fragment="true"/>
       <plugin id="org.cognetics.proverspalette.base"/>
       <plugin id="org.cognetics.proverspalette.maple"/>
       <plugin id="org.cognetics.proverspalette.qepcad"/>
@@ -153,7 +154,7 @@ With Prover&apos;s Palette extensions, (c) Laura Meikle 2009.
       <plugin id="org.eclipse.swt.wpf.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.team.core"/>
       <plugin id="org.eclipse.team.cvs.core"/>
-      <plugin id="org.eclipse.team.cvs.ssh"/>
+      <plugin id="org.eclipse.team.cvs.ssh" fragment=""/>
       <plugin id="org.eclipse.team.cvs.ssh2"/>
       <plugin id="org.eclipse.team.cvs.ui"/>
       <plugin id="org.eclipse.team.ui"/>

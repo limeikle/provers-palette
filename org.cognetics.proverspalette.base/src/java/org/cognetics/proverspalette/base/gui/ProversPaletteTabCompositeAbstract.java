@@ -174,7 +174,21 @@ public abstract class ProversPaletteTabCompositeAbstract extends Composite {
 		gl.marginWidth = marginY;
 		return gl;
 	}
-	
+
+	public static GridLayout newGridLayout0(int numColumns) {
+		GridLayout gl = new GridLayout();
+		gl.numColumns = numColumns;
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		// do these do anything? seems not... :
+		gl.marginTop = 0;
+		gl.marginBottom = 0;
+		gl.marginLeft = 0;
+		gl.marginRight = 0;
+		// ? what about horiz/vert spacing?
+		return gl;
+	}
+
 	protected MathsProverTranslator prover() {
 		return view.getCurrentProverTranslator();
 	}
