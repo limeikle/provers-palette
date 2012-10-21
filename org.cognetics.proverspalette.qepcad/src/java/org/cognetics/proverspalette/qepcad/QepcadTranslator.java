@@ -70,8 +70,8 @@ public class QepcadTranslator implements MathsSystemTranslator {
 		return "QEPCAD";
 	}
 
-	public Set<MathsToken> getUnknownPredicates(MathsExpression systemExpression) {
-		Set<MathsToken> unknowns = new LinkedHashSet<MathsToken>();
+	public Set<MathsExpression> getUnknownPredicates(MathsExpression systemExpression) {
+		Set<MathsExpression> unknowns = new LinkedHashSet<MathsExpression>();
 		collectUnknownPredicates(systemExpression, unknowns);
 		return unknowns;
 	}
@@ -113,27 +113,28 @@ public class QepcadTranslator implements MathsSystemTranslator {
 		ISABELLE_QEPCAD_TRANSLATIONS.put("False", "FALSE");
 	}
 
-	private void collectUnknownPredicates(MathsExpression exp, Set<MathsToken> unknowns) {
-		if (exp instanceof MathsToken) {
-			if (ISABELLE_QEPCAD_TRANSLATIONS.containsValue( ((MathsToken)exp).getToken() )) return;
-			if (((MathsToken)exp).getToken().trim().length()==0)
-				//multiplication
-				return;
-			if (exp.isOperator()) unknowns.add((MathsToken) exp);
-			//not an operator, assume is a variable
-			return;
+	private void collectUnknownPredicates(MathsExpression exp, Set<MathsExpression> unknowns) {
+		// first check the operator of this expression
+		MathsExpression token = exp;
+		if (exp instanceof MathsOperatorGroup) token = ((MathsOperatorGroup)exp).getOperator();
+		if (token instanceof MathsToken) {
+			boolean unknownOperator = true;
+			unknownOperator &= !(ISABELLE_QEPCAD_TRANSLATIONS.containsValue( ((MathsToken)token).getToken() ));
+			unknownOperator &= !(((MathsToken)token).getToken().trim().length()==0); //multiplication
+			// check it is an operator, if it is a simple token (but operators inside groups may not be marked as operators)
+			unknownOperator &= (token.isOperator() || (exp instanceof MathsOperatorGroup));
+			if (unknownOperator) unknowns.add(exp);
 		}
+		
+		// then recurse through non-operator tokens 
 		if (exp instanceof QepcadBinding) {
 			collectUnknownPredicates(((QepcadBinding)exp).getUnderlyingExpression(), unknowns);
 			return;
 		}
 		if (exp instanceof MathsOperatorGroup) {
-			MathsExpression op = ((MathsOperatorGroup)exp).getOperator();
-			if ((op instanceof MathsToken) && !((MathsToken)op).isOperator()) {
-				collectUnknownPredicates( MathsExpressions.newToken( ((MathsToken)op).getToken(), true), unknowns );				
-			}
 			for (MathsExpression ei : ((MathsOperatorGroup)exp).getList()) {
-				collectUnknownPredicates(ei, unknowns);
+				if (!ei.equals(token))
+					collectUnknownPredicates(ei, unknowns);
 			}
 		}
 	}
@@ -339,7 +340,7 @@ public class QepcadTranslator implements MathsSystemTranslator {
 			MathsExpression proverExpression,
 			MathsProverTranslator proverTranslator) {
 		if (proverTranslator==null || proverExpression==null) return false;
-		Set<MathsToken> unknowns = getUnknownPredicates( fromCommon( proverTranslator.toCommon( proverExpression ) ) );
+		Set<MathsExpression> unknowns = getUnknownPredicates( fromCommon( proverTranslator.toCommon( proverExpression ) ) );
 		if (!unknowns.isEmpty()) return false;
 		
 		if (proverTranslator.shouldSuggestConvertToPnf(proverExpression)) return false;

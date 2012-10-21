@@ -98,8 +98,8 @@ public class ImportTabComposite extends org.cognetics.proverspalette.base.gui.Im
 		final ColumnLayout colLayout = ((EasyScrollingComposite.EasyScrollingColumnLayoutComposite)compositeConclusion).columnLayout;
 		colLayout.minNumColumns = 1;
 		colLayout.maxNumColumns = 1;
-		colLayout.topMargin = 10;
-		colLayout.verticalSpacing = 10;
+		colLayout.topMargin = 6;
+		colLayout.verticalSpacing = 2;
 		colLayout.horizontalSpacing = 30;
 		compositeConclusion.setBackground(new Color(Display.getCurrent(), new RGB(255, 255, 255)));
 
@@ -115,9 +115,9 @@ public class ImportTabComposite extends org.cognetics.proverspalette.base.gui.Im
 		compositeAssumptions = new EasyScrollingComposite.EasyScrollingColumnLayoutComposite(groupAG);
 		final ColumnLayout colLayout = ((EasyScrollingComposite.EasyScrollingColumnLayoutComposite)compositeAssumptions).columnLayout;
 		colLayout.minNumColumns = 1;
-		colLayout.maxNumColumns = 2;
-		colLayout.topMargin = 10;
-		colLayout.verticalSpacing = 10;
+		colLayout.maxNumColumns = 1;
+		colLayout.topMargin = 6;
+		colLayout.verticalSpacing = 2;
 		colLayout.horizontalSpacing = 30;
 		compositeAssumptions.setBackground(new Color(Display.getCurrent(), new RGB(255, 255, 255)));
 	}

@@ -63,8 +63,8 @@ public class MapleTranslator implements MathsSystemTranslator {
 		return false;
 	}
 	
-	public Set<MathsToken> getUnknownPredicates(MathsExpression systemExpression) {
-		Set<MathsToken> unknowns = new LinkedHashSet<MathsToken>();
+	public Set<MathsExpression> getUnknownPredicates(MathsExpression systemExpression) {
+		Set<MathsExpression> unknowns = new LinkedHashSet<MathsExpression>();
 		collectUnknownPredicates(systemExpression, unknowns);
 		return unknowns;
 	}
@@ -104,7 +104,8 @@ public class MapleTranslator implements MathsSystemTranslator {
 		ISABELLE_MAPLE_TRANSLATIONS.put("False", FALSE);
 	}
 
-	private void collectUnknownPredicates(MathsExpression exp, Set<MathsToken> unknowns) {
+	private void collectUnknownPredicates(MathsExpression exp, Set<MathsExpression> unknowns) {
+		// TODO see this method in QepcadTranslator, for more better routines which return entire expression, not just tokens
 		if (exp instanceof MathsToken) {
 			if (ISABELLE_MAPLE_TRANSLATIONS.containsValue( ((MathsToken)exp).getToken() )) return;
 			if (exp.isOperator()) unknowns.add((MathsToken) exp);
@@ -314,7 +315,7 @@ public class MapleTranslator implements MathsSystemTranslator {
 			MathsExpression proverExpression,
 			MathsProverTranslator proverTranslator) {
 		if (proverTranslator==null || proverExpression==null) return false;
-		Set<MathsToken> unknowns = getUnknownPredicates( fromCommon( proverTranslator.toCommon( proverExpression ) ) );
+		Set<MathsExpression> unknowns = getUnknownPredicates( fromCommon( proverTranslator.toCommon( proverExpression ) ) );
 		if (!unknowns.isEmpty()) return false;
 
 		if (proverTranslator.shouldSuggestConvertToPnf(proverExpression)) return false;

@@ -21,10 +21,10 @@ public interface MathsProverTranslator extends MathsSystemTranslator {
 		
 	boolean shouldSuggestConvertToPnf(MathsExpression proverSubgoalText);	
 	boolean shouldSuggestExpandUnknownPredicates(
-			MathsExpression proverSubgoalText, Set<MathsToken> unknownPredicates);
+			MathsExpression proverSubgoalText, Set<MathsExpression> unknownPredicates);
 
 	String getCommandForConvertingToPnf(String text);
-	String getCommandForExpandingPredicates(Collection<String> unknownPredicates);
+	String getCommandForExpandingPredicates(Collection<MathsExpression> unknownPredicates);
 	
 	String annotateWithTypeInformation(String result, VariableBinding[] variablesAndBindings);
 

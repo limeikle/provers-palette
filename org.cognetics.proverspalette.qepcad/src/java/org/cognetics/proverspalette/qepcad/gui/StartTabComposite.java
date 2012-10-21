@@ -1,6 +1,5 @@
 package org.cognetics.proverspalette.qepcad.gui;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.cognetics.proverspalette.base.ProofGeneralScriptingUtils;
@@ -11,7 +10,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.heneveld.maths.structs.MathsExpression;
-import org.heneveld.maths.structs.MathsToken;
 
 public class StartTabComposite extends org.cognetics.proverspalette.base.gui.StartTabComposite {
 
@@ -60,12 +58,10 @@ public class StartTabComposite extends org.cognetics.proverspalette.base.gui.Sta
 				try{
 					MathsExpression problemProver = prover().parse( getProverProblemTextCurrentlyDisplayed() );
 					MathsExpression problemCommonLang = view.getCurrentProverTranslator().toCommon(problemProver);
-					Set<MathsToken> unknownPredicatesSystem = view.getCurrentExternalSystemTranslator().
+					Set<MathsExpression> unknownPredicatesSystem = view.getCurrentExternalSystemTranslator().
 						getUnknownPredicates( view.getCurrentExternalSystemTranslator().fromCommon(problemCommonLang) );
-					Set<String> syms = new LinkedHashSet<String>();
-					for (MathsToken t: unknownPredicatesSystem) syms.add(t.getToken());
 					ProofGeneralScriptingUtils.insertInProofScript(							
-							prover().getCommandForExpandingPredicates(syms),true );
+							prover().getCommandForExpandingPredicates(unknownPredicatesSystem),true );
 //					  insertCommand("expand", true);
 				}catch(InterruptedException ex){
 					ex.printStackTrace();
@@ -85,7 +81,7 @@ public class StartTabComposite extends org.cognetics.proverspalette.base.gui.Sta
 				view.getCurrentProverTranslator().shouldSuggestConvertToPnf(problemProver) );
 		
 		MathsExpression problemCommonLang = view.getCurrentProverTranslator().toCommon(problemProver);
-		Set<MathsToken> unknownPredicatesSystem = view.getCurrentExternalSystemTranslator().
+		Set<MathsExpression> unknownPredicatesSystem = view.getCurrentExternalSystemTranslator().
 			getUnknownPredicates( view.getCurrentExternalSystemTranslator().fromCommon(problemCommonLang) );					
 		buttonExpandPredicates.setEnabled(
 				view.getCurrentProverTranslator().shouldSuggestExpandUnknownPredicates(

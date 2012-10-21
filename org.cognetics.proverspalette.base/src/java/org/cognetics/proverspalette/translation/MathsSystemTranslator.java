@@ -108,7 +108,8 @@ public interface MathsSystemTranslator {
 	/** strips quantifications, either from the outside only, or everywhere if deep is set */
 	MathsExpression stripQuantifications(MathsExpression systemExpression, boolean deep);
 	
-	Set<MathsToken> getUnknownPredicates(MathsExpression systemExpression);
+	/** predicate is the operator in the returned expressions */
+	Set<MathsExpression> getUnknownPredicates(MathsExpression systemExpression);
 
 	/** marks any invalid variable names as 'unknown' or, in certain permitted circumstances,
 	 * renames them for use in the target system, if we know that the renaming will be recognised by the prover

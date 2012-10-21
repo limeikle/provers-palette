@@ -9,8 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.cognetics.proverspalette.translation.MathsProverTranslator;
 import org.cognetics.proverspalette.translation.VariableBinding;
@@ -22,6 +22,7 @@ import org.heneveld.isabelle.QuantificationOperatorGroup;
 import org.heneveld.javautils.TwoWayMap;
 import org.heneveld.maths.structs.MathsExpression;
 import org.heneveld.maths.structs.MathsGroup;
+import org.heneveld.maths.structs.MathsOperatorGroup;
 import org.heneveld.maths.structs.MathsToken;
 
 import ed.inf.proofgeneral.ProofGeneralPlugin;
@@ -42,16 +43,48 @@ public class IsabelleTranslator implements MathsProverTranslator {
 		return command.toString();
 	}
 
-	public String getCommandForExpandingPredicates( Collection<String> unknownPredicates ) {
-		StringBuffer command = new StringBuffer();		
-		command.append("apply (simp only:");
+	public String getCommandForExpandingPredicates( Collection<MathsExpression> unknownPredicates ) {
+		StringBuffer command = new StringBuffer();
+		Set<String> simps = new LinkedHashSet<String>();
+		Set<String> cases = new LinkedHashSet<String>();
 
-		for (String u1 : unknownPredicates){
-			if (isTokenExpandable(u1))
-				command.append(" "+u1+"_def");
+		for (MathsExpression u1 : unknownPredicates){
+			MathsExpression token = u1;
+			if (u1 instanceof MathsOperatorGroup) {
+				token = ((MathsOperatorGroup)u1).getOperator();
+				if (token.toString().startsWith("Rep_")) {
+					// this is a typedef internal representation
+					if (((MathsOperatorGroup)u1).getList().size() == 2) {
+						MathsExpression var = ((MathsOperatorGroup)u1).getList().get(1);
+						if (var instanceof MathsToken) {
+							cases.add("cases "+var);
+						}
+					} else {
+						// is a rep we can't parse.
+					}
+					continue;
+				}
+			}
+			if (isExpandable(token))
+				simps.add(" "+token+"_def");
 		}	    
 
-		command.append(")\n");	 
+		if (!cases.isEmpty()) {
+			command.append("apply (");
+			int i=0;
+			for (String s: cases) {
+				if (i++>0) command.append(", ");
+				command.append(s);
+			}
+			command.append(")\n");
+			// auto preferred here because it removes unnecessary assumptions (once we have expanded the defined type)
+			command.append("apply auto\n");
+		}
+		if (!simps.isEmpty()) {
+			command.append("apply (simp only:");
+			for (String s: simps) command.append(s);
+			command.append(")?\n");
+		}
 		return command.toString();
 	}
 
@@ -79,7 +112,7 @@ public class IsabelleTranslator implements MathsProverTranslator {
 	// (or / when RHS is 1... but that should be up to simp or other technique)
 	public static final Set<String> KNOWN_NOT_EXPANDABLE_SYMBOLS =
 		Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(new String[] {
-				"/", "^"
+				"/", "^", "\\<And>", "!!"
 		})));
 
 	private boolean isTokenExpandable(String token) {
@@ -95,12 +128,17 @@ public class IsabelleTranslator implements MathsProverTranslator {
 			return false;
 		return true;
 	}
+	private boolean isExpandable(MathsExpression exp) {
+		if (exp instanceof MathsToken) return isTokenExpandable( ((MathsToken)exp).getToken() );
+		if (exp instanceof MathsOperatorGroup) return isExpandable( ((MathsOperatorGroup)exp).getOperator() );
+		return false;
+	}
 	public boolean shouldSuggestExpandUnknownPredicates(
-			MathsExpression proverSubgoal, Set<MathsToken> unknowns) {
+			MathsExpression proverSubgoal, Set<MathsExpression> unknowns) {
 		if (unknowns.isEmpty()) return false;
 //		Map<String, VariableBinding> vars = getVariables(proverSubgoalText);
-		for (MathsToken u : unknowns) {
-			if (!isTokenExpandable(u.getToken()))
+		for (MathsExpression u : unknowns) {
+			if (!isExpandable(u))
 				continue;
 			//it looks like a predicate, so suggest expanding
 			return true;
@@ -112,6 +150,9 @@ public class IsabelleTranslator implements MathsProverTranslator {
 	static {
 		ISABELLE_VARIABLE_BINDING_TRANSLATIONS.put("ALL", VariableBinding.BindingType.ALL);
 		ISABELLE_VARIABLE_BINDING_TRANSLATIONS.put("\\<forall>", VariableBinding.BindingType.ALL);
+		// we ignore these; not sure whether they belong here instead/also
+//		ISABELLE_VARIABLE_BINDING_TRANSLATIONS.put("!!", VariableBinding.BindingType.ALL);
+//		ISABELLE_VARIABLE_BINDING_TRANSLATIONS.put("\\<And>", VariableBinding.BindingType.ALL);
 		ISABELLE_VARIABLE_BINDING_TRANSLATIONS.put("EX", VariableBinding.BindingType.EXISTS);
 		ISABELLE_VARIABLE_BINDING_TRANSLATIONS.put("\\<exists>", VariableBinding.BindingType.EXISTS);
 	}
@@ -142,7 +183,7 @@ public class IsabelleTranslator implements MathsProverTranslator {
 		return "Isabelle";
 	}
 
-	public Set<MathsToken> getUnknownPredicates(MathsExpression proverText) {
+	public Set<MathsExpression> getUnknownPredicates(MathsExpression proverText) {
 		return Collections.emptySet();
 	}
 
@@ -162,6 +203,8 @@ public class IsabelleTranslator implements MathsProverTranslator {
 		//FIXME parser should do this
 		proverSubgoalText = proverSubgoalText.replaceAll("\\bEX\\s*!", "EX! ");
 		proverSubgoalText = proverSubgoalText.replaceAll("\\\\<twosuperior>", " ^ 2 ");
+		proverSubgoalText = proverSubgoalText.replace('\n', ' ');
+		proverSubgoalText = proverSubgoalText.replaceAll("\\s+", " ");
 		
 		//FIXME really the parser should do this but currently it doesn't understand "\<And>"
 		if (proverSubgoalText.trim().startsWith("\\<And>")) {

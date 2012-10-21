@@ -61,12 +61,10 @@ public class StartTabComposite extends
 				try{
 					MathsExpression problemProver = prover().parse( getProverProblemTextCurrentlyDisplayed() );
 					MathsExpression problemCommonLang = view.getCurrentProverTranslator().toCommon(problemProver);
-					Set<MathsToken> unknownPredicatesSystem = view.getCurrentExternalSystemTranslator().
+					Set<MathsExpression> unknownPredicatesSystem = view.getCurrentExternalSystemTranslator().
 						getUnknownPredicates( view.getCurrentExternalSystemTranslator().fromCommon(problemCommonLang) );
-					Set<String> syms = new LinkedHashSet<String>();
-					for (MathsToken t: unknownPredicatesSystem) syms.add(t.getToken());
 					ProofGeneralScriptingUtils.insertInProofScript(							
-							prover().getCommandForExpandingPredicates(syms),true );
+							prover().getCommandForExpandingPredicates(unknownPredicatesSystem),true );
 				}catch(InterruptedException ex){
 					ex.printStackTrace();
 				}
@@ -84,7 +82,7 @@ public class StartTabComposite extends
 				view.getCurrentProverTranslator().shouldSuggestConvertToPnf(problemProver) );
 		
 		MathsExpression problemCommonLang = view.getCurrentProverTranslator().toCommon(problemProver);
-		Set<MathsToken> unknownPredicatesSystem = view.getCurrentExternalSystemTranslator().
+		Set<MathsExpression> unknownPredicatesSystem = view.getCurrentExternalSystemTranslator().
 			getUnknownPredicates( view.getCurrentExternalSystemTranslator().fromCommon(problemCommonLang) );					
 		buttonExpandPredicates.setEnabled(
 				view.getCurrentProverTranslator().shouldSuggestExpandUnknownPredicates(
